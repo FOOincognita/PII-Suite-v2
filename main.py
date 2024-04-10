@@ -8,13 +8,14 @@ from streamlit_extras.dataframe_explorer import dataframe_explorer as dfExplorer
 from modules.FileExplorer import FileExplorer #? Select files/folder for path
 from modules.Linker import _LINKER #? Handles Linking; call PIILinker::__run()
 
+"""
+    * ---------- WORK IN PROGRESS ---------- *
+        # Add prog bars, toast, etc.
+        ? Add persistent memory maybe?? idk
 
-## Add prog bars, toast, etc.
-#? Add persistent memory maybe?? idk
-
+"""
 
 #* --------------- GLOBAL CONFIG --------------- *#
-# Global App Config
 st.set_page_config(
     page_title = "PII-Suite", 
     page_icon  = "assets/favicon.png",
@@ -22,7 +23,7 @@ st.set_page_config(
     menu_items = {             
         'Get Help'     : 'https://github.com/FOOincognita/UI/', #! ADD LINK
         'Report a bug' : "https://github.com/FOOincognita/UI/", #! ADD LINK
-        'About'        : "# This is a Header!"                  #! ADD INFO
+        'About'        : "Texas A&M University Department of Computer Science & Engineerimg"                  #! ADD INFO
     }
 )
 
@@ -51,13 +52,18 @@ def link() -> None: ## TODO: ADD STUDENT & PIILinker CLASSES
     ## TODO redemption; archive support
     st.title('Linker')
     
-    ## Main Submission 
+    ## Main 
         #* CSV Selection
-        #* Submissions
+        #* Submissions 
         #* Starter 
         #* Output
         
-    ##
+    ## Redemption 
+        #* CHECK-BOX: Redemption Mode
+        #* CSV Selection
+        #* Submissions Dir
+        
+        
     
     #! Send paths to PIILinker 
     # __run()
