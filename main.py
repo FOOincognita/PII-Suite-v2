@@ -47,63 +47,55 @@ def main() -> None:
         case 'Settings': settings()
         case _:
             st.exception(RuntimeError("[ERROR]: Default Case Reached in main()"))
-    
+
+
+
 
 #* --------------- DATA FRAME --------------- *#
 def link() -> None: ## TODO: ADD STUDENT & PIILinker CLASSES
     ## TODO redemption; archive support
     ## Maybe add stepper-bar?
-    st.title('Linker')
+    st.title('PII-Linker v2-Beta', anchor=False)
     
-    #* Global Starter 
-    STARTER = FileExplorer("starterCode", "Select Directory", FileType.FOLDER).select_folder()
-    
-    #* Global Output
-    OUTPUT = FileExplorer("output", "Select Output Dir", FileType.FOLDER).select_folder()
-    
-    
-    ## Main submissions
-    #* CSV Selection
-    st.markdown("Select CSV")
-    CSV = FileExplorer("CSV", "Select CSV", FileType.FILE).select_file()
-        
-    #* Submissions 
-    SUBMISSIONS = FileExplorer("submissions", "Select Submissions Dir", FileType.FOLDER).select_folder()
+    st.write(""); st.subheader("Original Submissions", anchor=False)
+    with st.container(border=1):
 
-        
+        st.session_state["starterCode"]    = FileExplorer("starterCode",    "Select Starter Code Directory", FileType.FOLDER).select_folder()
+        st.session_state["outputDir"]      = FileExplorer("outputDir",      "Select Output Directory",       FileType.FOLDER).select_folder()
+        st.session_state["submissionsDir"] = FileExplorer("submissionsDir", "Select Submissions Directory",  FileType.FOLDER).select_folder()
+        st.session_state["originalCSV"]    = FileExplorer("originalCSV",    "Select CSV File",               FileType.FILE).select_file()
+            
+    #!!! if not code contents . split()[0] "select" for input validation
+
     ## Redemption 
+    if "redemptionToggle" not in st.session_state:
+        st.session_state["redemptionToggle"] = False  # Default state is OFF
+        
+    st.write(''); st.subheader('Redemption Submissions', anchor=False) 
     
-    if 'toggle_state' not in st.session_state:
-        st.session_state['toggle_state'] = False  # Default state is OFF
-    
-    st.subheader('Redemption', divider='gray')
-    #* CHECK-BOX: Redemption Mode
-    # Update the toggle state in session state
-    st.session_state['TOGGLE_R'] = st.toggle('Redemption Mode')
+    with st.container(border=1):  
+        #* CHECK-BOX: Redemption Mode
+        # Update the toggle state in session state
+        st.session_state['redemptionToggle'] = st.toggle('Redemption Mode')
 
-    if st.session_state['TOGGLE_R']:
-        # When toggled on, execute these lines
-        CSV_R = FileExplorer("CSV_R", "Select CSV", FileType.FILE).select_file()
-        SUBMISSIONS_R = FileExplorer("submissions_R", "Select Submissions", FileType.FOLDER).select_folder()
-        st.session_state['CSV_R'] = CSV_R  # Optionally, store the results in session state for further use
-        st.session_state['SUBMISSIONS_R'] = SUBMISSIONS_R
-    else:
-        # Optional: Provide feedback or alternative content when toggled off
-        st.write("Redemption is Disabled")
-    
-    
+        if st.session_state.get("redemptionToggle"):
+            st.session_state['redemptionCSV'] = FileExplorer("redemptionCSV", "Select Redemption CSV", FileType.FILE).select_file()
+            st.session_state['redemptionSubmissionsDir'] = FileExplorer("redemptionSubmissionsDir", "Select Redemption Submissions", FileType.FOLDER).select_folder()
+
+
+            
     #! Send paths to PIILinker 
     #! Check for exceptions & grey outs for errors
     # __run()
     
     #> Use toast to show complete
-    
+
 
 
 #* --------------- Sub-menu example (horizontal) --------------- *#
 def search() -> None:
     # TODO: Add Search GUI
-    st.title("Search")
+    st.title("PII-Search v2-Beta [WiP]")
     
     ## Either use streamlit-searchbox or streamlit-keyup
     #! Don't forgor to add to requirements.txt
@@ -112,7 +104,7 @@ def search() -> None:
 #* --------------- SETTINGS --------------- *#
 def compare() -> None:
     # TODO: Add Compare50 GUI
-    st.title('Compare50')
+    st.title('Compare50 [WiP]')
     sub_tab = option_menu(
         None,
         options       = ["A", "B"],
