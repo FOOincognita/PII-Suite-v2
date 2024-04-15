@@ -15,7 +15,7 @@ class Student:
         
     def __eq__(self, rhs: Student) -> bool:
             """ Compare only NAME, UIN, and EMAIL """
-            if not isinstance(rhs, Student):
+            if not isinstance(rhs, Student): #!! CHANGE EXCEPTION NAME
                 raise TypeMismatchError(f"Student::__eq__\n\tExpected type(rhs) -> Student\n\tActual type(rhs) -> {type(rhs)}")
             return (self.name, self.UIN, self.email, self.section) == (rhs.name, rhs.UIN, rhs.email, rhs.section)
 

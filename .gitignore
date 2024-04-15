@@ -1,2 +1,5 @@
 /.DS_Store
 /ExplorerTest.py
+modules/FE_OLD.py
+*.pyc
+modules/__pycache__/FileExplorer.cpython-312.pyc

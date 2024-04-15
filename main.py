@@ -5,15 +5,17 @@ import streamlit as st
 from streamlit_option_menu import option_menu
 from streamlit_extras.dataframe_explorer import dataframe_explorer as dfExplorer
 
-from modules.FileExplorer import FileExplorer #? Select files/folder for path
+from modules.FileExplorer import FileExplorer, FileType #? Select files/folder for path
 from modules.Linker import _LINKER #? Handles Linking; call PIILinker::__run()
 
-"""
-    * ---------- WORK IN PROGRESS ---------- *
-        # Add prog bars, toast, etc.
-        ? Add persistent memory maybe?? idk
 
-"""
+
+    #* ---------- WORK IN PROGRESS ---------- *
+        # Add prog bars, toast, etc.
+        #? Add persistent memory maybe?? idk
+        # Add streamlit-on-Hover-tabs
+        #> Add st.file_uploader for C50 runs
+
 
 #* --------------- GLOBAL CONFIG --------------- *#
 st.set_page_config(
@@ -50,23 +52,51 @@ def main() -> None:
 #* --------------- DATA FRAME --------------- *#
 def link() -> None: ## TODO: ADD STUDENT & PIILinker CLASSES
     ## TODO redemption; archive support
+    ## Maybe add stepper-bar?
     st.title('Linker')
     
-    ## Main 
-        #* CSV Selection
-        #* Submissions 
-        #* Starter 
-        #* Output
+    #* Global Starter 
+    STARTER = FileExplorer("starterCode", "Select Directory", FileType.FOLDER).select_folder()
+    
+    #* Global Output
+    OUTPUT = FileExplorer("output", "Select Output Dir", FileType.FOLDER).select_folder()
+    
+    
+    ## Main submissions
+    #* CSV Selection
+    st.markdown("Select CSV")
+    CSV = FileExplorer("CSV", "Select CSV", FileType.FILE).select_file()
+        
+    #* Submissions 
+    SUBMISSIONS = FileExplorer("submissions", "Select Submissions Dir", FileType.FOLDER).select_folder()
+
         
     ## Redemption 
-        #* CHECK-BOX: Redemption Mode
-        #* CSV Selection
-        #* Submissions Dir
-        
-        
+    
+    if 'toggle_state' not in st.session_state:
+        st.session_state['toggle_state'] = False  # Default state is OFF
+    
+    st.subheader('Redemption', divider='gray')
+    #* CHECK-BOX: Redemption Mode
+    # Update the toggle state in session state
+    st.session_state['TOGGLE_R'] = st.toggle('Redemption Mode')
+
+    if st.session_state['TOGGLE_R']:
+        # When toggled on, execute these lines
+        CSV_R = FileExplorer("CSV_R", "Select CSV", FileType.FILE).select_file()
+        SUBMISSIONS_R = FileExplorer("submissions_R", "Select Submissions", FileType.FOLDER).select_folder()
+        st.session_state['CSV_R'] = CSV_R  # Optionally, store the results in session state for further use
+        st.session_state['SUBMISSIONS_R'] = SUBMISSIONS_R
+    else:
+        # Optional: Provide feedback or alternative content when toggled off
+        st.write("Redemption is Disabled")
+    
     
     #! Send paths to PIILinker 
+    #! Check for exceptions & grey outs for errors
     # __run()
+    
+    #> Use toast to show complete
     
 
 
@@ -74,6 +104,9 @@ def link() -> None: ## TODO: ADD STUDENT & PIILinker CLASSES
 def search() -> None:
     # TODO: Add Search GUI
     st.title("Search")
+    
+    ## Either use streamlit-searchbox or streamlit-keyup
+    #! Don't forgor to add to requirements.txt
     
 
 #* --------------- SETTINGS --------------- *#

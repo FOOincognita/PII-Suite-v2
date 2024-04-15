@@ -1,6 +1,5 @@
 from os import getcwd, chdir, path, listdir, mkdir
-from StudentDatabase import _STUDENTS
-from __future__ import annotations
+from .StudentDatabase import _STUDENTS
 from datetime import datetime as dt
 import sys
 
@@ -47,8 +46,6 @@ class PIILinker:
         chdir(self.rootDir)
         
     
-    
-    #!!! [TODO]: ADD REDEMPTION SUPPORT
     def link(self) -> None:
         """ Extracts Submissions for PII-linking """
         SUBMISSIONS = self.submissionDir if not self.redemptionMode else self.redemptionSubsDir

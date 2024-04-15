@@ -1,4 +1,4 @@
-from StudentDatabase import _STUDENTS 
+from .StudentDatabase import _STUDENTS 
 import pandas as pd
 import threading
 import os
