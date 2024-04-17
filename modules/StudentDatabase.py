@@ -31,12 +31,19 @@ class StudentDatabase:
         self.df:       pd.DataFrame       = pd.DataFrame()
         self.students: dict[str, Student] = {}    #* {uin, Student}
     
-    def __getitem__(self, SID: str) -> Student | None:
-        """ Returns student given submissionID """
-        for _, student in self.students.items():
+    def get(self, SID: str, _default=None) -> Student | None:
+        """ Returns Student given 1 of each Student's submissionIDs (each student can have up to 2 submission IDs) """
+        for student in self.students.values():
             if SID in student.SID:
                 return student
-        return None
+        return _default 
+    
+    def __getitem__(self, SID: str) -> Student:
+        """ Returns Student given 1 of each Student's submissionIDs (each student can have up to 2 submission IDs) """
+        for student in self.students.values():
+            if SID in student.SID:
+                return student
+        raise KeyError(f"StudentDatabase::__getitem__\n\tSID -> {SID}\n\tStudentDatabase -> {self}")
             
             
     def __setitem__(self, SID: str, student: Student) -> None:
@@ -90,7 +97,7 @@ class StudentDatabase:
                     section = row['section']
                 )
             
-        #*
+        #* Concatenate DataFrame to existing DataFrame or replace empty DataFrame
         self.df = pd.concat([self.df, _DF], ignore_index=True) if self.df else _DF
 
 

@@ -30,11 +30,10 @@ class FileType(Enum):
 class Explorer:
     
     def __init__(self, _buttonName: str, _buttonMsg: str, _type: FileType):
-        tmp = f"{_buttonName}_{('folder' if _type == FileType.FOLDER else 'file')}_"
-        self.NAME:  str      = f"{tmp}path"
+        self.NAME:  str      = f"{_buttonName}_path"
         self.MSG:   str      = _buttonMsg
         self.type:  FileType = _type
-        self.KEY:   str      = f"{tmp}key"
+        self.KEY:   str      = f"{_buttonName}_key"
         self.valid: bool     = 0
         
         if self.NAME not in st.session_state:
