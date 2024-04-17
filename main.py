@@ -5,9 +5,8 @@ import streamlit as st
 from streamlit_option_menu import option_menu
 from streamlit_extras.dataframe_explorer import dataframe_explorer as dfExplorer
 
-from modules.FileExplorer import FileExplorer, FileType #? Select files/folder for path
+from modules.Explorer import Explorer, FileType #? Select files/folder for path
 from modules.Linker import _LINKER #? Handles Linking; call PIILinker::__run()
-
 
 
     #* ---------- WORK IN PROGRESS ---------- *
@@ -30,6 +29,7 @@ st.set_page_config(
 )
 
 
+
 def main() -> None:
     with st.sidebar:
         tab = option_menu(
@@ -49,44 +49,95 @@ def main() -> None:
             st.exception(RuntimeError("[ERROR]: Default Case Reached in main()"))
 
 
-
-
 #* --------------- DATA FRAME --------------- *#
 def link() -> None: ## TODO: ADD STUDENT & PIILinker CLASSES
     ## TODO redemption; archive support
     ## Maybe add stepper-bar?
+    
+    setState = lambda key, val: setattr(st.session_state, key, val)
+    getState = lambda key:      st.session_state.get(key)
+    
     st.title('PII-Linker v2-Beta', anchor=False)
     
+    #? Init redemption mode session state attr
+    if "redemptionToggle" not in st.session_state:
+        setState("redemptionToggle", False)
+    if "FERPAToggle" not in st.session_state:
+        setState("FERPAToggle", True)
+    
+    ## Mode Selection
+    st.write(""); st.subheader("Mode Selection", anchor=False)
+    with st.container(border=1):  
+        setState("FERPAToggle", 
+            st.toggle(
+                label = 'FERPA Mode', 
+                help  = "Toggle for FERPA compliance.\n\t0: Submissions linked using PII\n\t1: Submissions linked using Submission IDs", 
+                value = getState("FERPAToggle")
+            )
+        )
+        setState(
+            "redemptionToggle",
+            st.toggle(
+                label = "Redemption Mode",
+                help  = "Toggle for redemption mode.\n\t", ## TODO
+                value = getState("redemptionToggle")
+            )
+        )
+    
+    ## Init Explorers
+    def _initExplorer(__name: str, __msg: str, __type: FileType):
+        setState(__name, Explorer(__name, __msg, __type))
+        
+        match __type:
+            case FileType.FOLDER: getState(__name).selectFolder()
+            case FileType.FILE:   getState(__name).selectFile()
+            case _:               st.exception(RuntimeError("[ERROR]: Default Reached in initExplorer()"))
+    
+    
+    ## Original Submissions
     st.write(""); st.subheader("Original Submissions", anchor=False)
     with st.container(border=1):
+        _initExplorer("starterCode",    "Select Starter Code Directory", FileType.FOLDER)
+        _initExplorer("outputDir",      "Select Output Directory",       FileType.FOLDER)
+        _initExplorer("submissionsDir", "Select Submissions Directory",  FileType.FOLDER)
+        _initExplorer("originalCSV",    "Select CSV File",               FileType.FILE  )
 
-        st.session_state["starterCode"]    = FileExplorer("starterCode",    "Select Starter Code Directory", FileType.FOLDER).select_folder()
-        st.session_state["outputDir"]      = FileExplorer("outputDir",      "Select Output Directory",       FileType.FOLDER).select_folder()
-        st.session_state["submissionsDir"] = FileExplorer("submissionsDir", "Select Submissions Directory",  FileType.FOLDER).select_folder()
-        st.session_state["originalCSV"]    = FileExplorer("originalCSV",    "Select CSV File",               FileType.FILE).select_file()
-            
-    #!!! if not code contents . split()[0] "select" for input validation
+    ## Redemption Submissions
+    if getState("redemptionToggle"):
+        st.write(''); st.subheader("Redemption Submissions", anchor=False) 
+        with st.container(border=1):  
+            _initExplorer("redemptionSubsDir", "Select Redemption Submissions", FileType.FOLDER)
+            _initExplorer("redemptionCSV",     "Select Redemption CSV",         FileType.FILE)
 
-    ## Redemption 
-    if "redemptionToggle" not in st.session_state:
-        st.session_state["redemptionToggle"] = False  # Default state is OFF
+    ## Run Button        
+    if (runKey := "runToggle") not in st.session_state:
+        setState(runKey, False)
         
-    st.write(''); st.subheader('Redemption Submissions', anchor=False) 
+    #? Workaround for custom CSS; to allow this specific button to have default CSS values   
+    st.write("")
+    with st.form("NULLForm", border=False):
+        st.form_submit_button(
+            label               = "Link Submissions",
+            disabled            = (not getState(runKey)),
+            on_click            = lambda: _LINKER.__run(getState("redemptionToggle")),
+            use_container_width = True
+        )
     
-    with st.container(border=1):  
-        #* CHECK-BOX: Redemption Mode
-        # Update the toggle state in session state
-        st.session_state['redemptionToggle'] = st.toggle('Redemption Mode')
-
-        if st.session_state.get("redemptionToggle"):
-            st.session_state['redemptionCSV'] = FileExplorer("redemptionCSV", "Select Redemption CSV", FileType.FILE).select_file()
-            st.session_state['redemptionSubmissionsDir'] = FileExplorer("redemptionSubmissionsDir", "Select Redemption Submissions", FileType.FOLDER).select_folder()
-
-
+    #? Check for runnable status & update runToggle state if either condition(s) met
+    RT:     bool = getState("redemptionToggle")
+    VALID:  bool = all(getState(key).valid for key in ["starterCode", "outputDir", "submissionsDir", "originalCSV"])
+    RVALID: bool = False
+    
+    if getState("redemptionToggle"):
+        RVALID = all((getState(key).valid for key in ["redemptionCSV", "redemptionSubsDir"]))
+        
+    setState(runKey, (all([not RT, VALID]) or all([RT, VALID, RVALID])))
+ 
+    #* (~P ^ Q) v (P ^ Q ^ R)
+            
             
     #! Send paths to PIILinker 
     #! Check for exceptions & grey outs for errors
-    # __run()
     
     #> Use toast to show complete
 

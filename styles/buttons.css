@@ -1,6 +1,5 @@
 button {
-    max-width: 125px !important;
+    /*!max-width: 125px !important;*/
     height: 40px !important;
     margin-top: 5px !important; 
 }
-

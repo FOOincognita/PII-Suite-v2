@@ -1,6 +1,7 @@
 from os import getcwd, chdir, path, listdir, mkdir
 from .StudentDatabase import _STUDENTS
 from datetime import datetime as dt
+import streamlit as st
 import sys
 
 
@@ -92,19 +93,21 @@ class PIILinker:
             chdir(EXPDIR) 
         chdir(self.rootDir) 
         
+
+    def __run(self, _redMode: bool) -> bool:
+        st.title(f"Linker::__run() Called. _redMode: {_redMode}")
         
-    def __run(self) -> bool:
+    def hvhfjhgf(self, _redMode: bool) -> bool:
         
         """ Logic flow control for PII-Linker 
             !! TODO: Add "grey out" to "run" button if redemption check box
             !!       is selected, but no/invalid path was specified
-        
         """
         try:
             self.setup()
             self.link(self.submissionDir)
             
-            if self.redemptionMode:
+            if self._redMode:
                 self.link(self.redemptionSubsDir)
                 
             self.generate()
