@@ -121,7 +121,7 @@ class PIILinker:
         chdir(self.rootDir) 
         
         
-    def update(self) -> None:
+    def _update(self) -> None:
         ## Pre-Flight Check
         #!! [FIXME]: WRITE SETTINGS TO JSON
         getState = lambda key: st.session_state.get(key)
@@ -145,7 +145,7 @@ class PIILinker:
     def _run(self) -> None:
         """ Logic for PII-Linker """
         #* Update all variables
-        self.update()
+        self._update()
         
         #* Status Bar
         with st.status("Linking Submissions...", expanded=True) as status:

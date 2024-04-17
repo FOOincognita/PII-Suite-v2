@@ -66,7 +66,7 @@ class StudentDatabase:
             ]
         )
         
-        # Rename columns for clarity and direct mapping
+        #* Rename columns for clarity and direct mapping
         _DF.rename(
             columns={
                 'SID'           : 'UIN', 
@@ -89,12 +89,12 @@ class StudentDatabase:
                 self.students[row['UIN']].SID += [row['SID']]
             else:
                 self.students[row['UIN']] = Student(
-                    first   = row['first'],
-                    last    = row['last'],
-                    SID     = row['SID'],
-                    UIN     = row['UIN'],
-                    email   = row['email'],
-                    section = row['section']
+                    _first   = row['first'],
+                    _last    = row['last'],
+                    _SID     = row['SID'],
+                    _UIN     = row['UIN'],
+                    _email   = row['email'],
+                    _section = row['section']
                 )
             
         #* Concatenate DataFrame to existing DataFrame or replace empty DataFrame
