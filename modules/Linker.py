@@ -94,7 +94,7 @@ class PIILinker:
         chdir(self.rootDir) 
         
 
-    def __run(self, _redMode: bool) -> bool:
+    def _run(self, _redMode: bool) -> bool:
         st.title(f"Linker::__run() Called. _redMode: {_redMode}")
         
     def hvhfjhgf(self, _redMode: bool) -> bool:
