@@ -10,7 +10,7 @@ def link() -> None: ## TODO: ADD STUDENT & PIILinker CLASSES
     setState = lambda key, val: setattr(st.session_state, key, val)
     getState = lambda key:      st.session_state.get(key)
     
-    st.title('PII-Linker', anchor=False)
+    st.title('Linker v2-β', anchor=False)
     
     #? Init redemption mode session state attr for global use
     if "redemptionToggle" not in st.session_state:
@@ -42,7 +42,7 @@ def link() -> None: ## TODO: ADD STUDENT & PIILinker CLASSES
     #* Original Submissions
     st.write(""); st.subheader("Original Submissions", anchor=False)
     with st.container(border=1):
-        _initExplorer("starterDir",    "Select Starter Code Directory", FileType.FOLDER)
+        _initExplorer("starterDir",    "Select Starter Code Directory", FileType.FOLDER )
         _initExplorer("outputDir",      "Select Output Directory",       FileType.FOLDER)
         _initExplorer("submissionsDir", "Select Submissions Directory",  FileType.FOLDER)
         _initExplorer("originalCSV",    "Select CSV File",               FileType.FILE  )

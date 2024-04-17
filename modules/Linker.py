@@ -5,7 +5,7 @@ import streamlit as st
 from enum import Enum
 import sys
 
-class InvalidStarterCode(RuntimeError): pass
+class InvalidStarterCode(RuntimeError): pass #? When no actual starter code is found
 class SIDNotFound(RuntimeError): pass #? When searching for a student by SID, no result was found
 
 
@@ -80,7 +80,7 @@ class PIILinker:
         
         chdir(SUBMISSIONS) 
         for folder in listdir():
-            if not path.isdir(folder): continue #? Prevents exceptions when the yml is present
+            if not path.isdir(folder): continue #? Prevents exceptions when the yml & other garbage is present
             try:
                 STUDENT = _STUDENTS[SID := folder.strip().split('_')[-1]]
             except KeyError:
@@ -90,7 +90,7 @@ class PIILinker:
             for file in self.starterFiles:       
                 if file not in listdir(): 
                     ## NOTE: Non-fatal
-                    print(f"[WARNING] Missing {file} for:\n\t{repr(STUDENT)}", file=sys.__stderr__) 
+                    print(f"\n[WARNING] Missing {file} for:\n\t{repr(STUDENT)} in {('Redemption' if __type.value else 'Original')}", file=sys.__stderr__) 
                     continue
         
                 with open(file, mode='r', encoding='utf-8', errors='ignore') as fileCode:
@@ -130,7 +130,7 @@ class PIILinker:
         getPath  = lambda key: st.session_state.get(f"{key}_path")
         
         #* Mode Settings
-        self.redemptionMode = getState("RedemptionToggle")
+        self.redemptionMode = getState("redemptionToggle")
         self.FERPAMode      = getState("FERPAToggle")
         
         #* Original Paths
