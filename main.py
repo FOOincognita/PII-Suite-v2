@@ -9,6 +9,7 @@ from views.searchView import search
 from views.settingsView import settings
 
 
+
 #* ---------- WORK IN PROGRESS ---------- *
     #? Add persistent memory maybe?? idk
     #> Add streamlit-on-Hover-tabs

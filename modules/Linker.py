@@ -65,6 +65,8 @@ class PIILinker:
         if self.redemptionMode:
             _STUDENTS.loadCSV(self.redemptionCSVDir)
         
+        _STUDENTS.writeLogs(path.join("logs", "studentDatabase.csv")) #!! FOR DEBUG ONLY
+        
     
     def link(self, __type: LinkType) -> None:
         """ Extracts Submissions for PII-linking
@@ -78,7 +80,7 @@ class PIILinker:
         
         chdir(SUBMISSIONS) 
         for folder in listdir():
-            if folder.endswith(".yml"): continue #? Prevents exceptions when the yml is present
+            if not path.isdir(folder): continue #? Prevents exceptions when the yml is present
             try:
                 STUDENT = _STUDENTS[SID := folder.strip().split('_')[-1]]
             except KeyError:
@@ -102,6 +104,7 @@ class PIILinker:
     def generate(self) -> None:
         """ Generates Folder PII-linked Code """
         PIISTAT = "FERPA" if self.FERPAMode else "Linked"
+        PIISTAT += "_REDEMPTION_" if self.redemptionMode else ""
         fileID = f"{(T := dt.now()).month}-{T.year}_{T.second}"
         mkdir(EXPDIR := path.join(self.outputDir, f"{PIISTAT}_{fileID}")) 
         chdir(EXPDIR) 
@@ -122,7 +125,6 @@ class PIILinker:
         
         
     def _update(self) -> None:
-        ## Pre-Flight Check
         #!! [FIXME]: WRITE SETTINGS TO JSON
         getState = lambda key: st.session_state.get(key)
         getPath  = lambda key: st.session_state.get(f"{key}_path")
@@ -181,7 +183,7 @@ class PIILinker:
                 status.update(label="Oospie Daisies...", state="error")
                 st.exception(Exception(f"[FATAL] Unknown Exception raised in Linker::generate()\n\tDetails: {e}"))
                 
-            status.update("Submissions Successfully Linked!", state="complete", expanded=False)
+            status.update(label="Submissions Successfully Linked!", state="complete", expanded=False)
 
 #* Singleton; import into needed files
 _LINKER = PIILinker()

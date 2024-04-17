@@ -49,7 +49,8 @@ class StudentDatabase:
     def __setitem__(self, SID: str, student: Student) -> None:
             """ Adds student to database """
             self.students[SID] = student
-            
+
+
   
     def loadCSV(self, PATH: str="") -> None:
         """ Builds student database using CSV """
@@ -81,6 +82,14 @@ class StudentDatabase:
         
         #* Filter rows where Status is "Graded"
         _DF = _DF[_DF['Status'] == 'Graded']
+            
+        #* Convert UIN and SID to int strings (truncate decimal)
+        _DF['UIN'] = _DF['UIN'].astype(int).astype(str)
+        _DF['SID'] = _DF['SID'].astype(int).astype(str)
+        
+        #* Replace empty entries in 'section' with "NA"
+        _DF['section'].fillna("NA", inplace=True)
+    
         
         # Iterate over the DataFrame rows and create Student instances
         for _, row in _DF.iterrows():
@@ -98,7 +107,26 @@ class StudentDatabase:
                 )
             
         #* Concatenate DataFrame to existing DataFrame or replace empty DataFrame
-        self.df = pd.concat([self.df, _DF], ignore_index=True) if self.df else _DF
+        self.df = _DF if self.df.empty else pd.concat([self.df, _DF], ignore_index=True)
+
+
+    def writeLogs(self, PATH: str="") -> None:
+        """ Writes student database to CSV """
+        stuData = []
+        
+        for uin, student in self.students.items():
+            SIDstr = ', '.join(student.SID)  # Join SID list into a single string separated by comma
+    
+            stuData.append([
+                uin,
+                student.name,
+                SIDstr,
+                student.section,
+                student.email
+            ])
+        
+        pd.DataFrame(stuData, columns=["UIN", "name", "SID", "section", "email"]).to_csv(PATH, index=False)
+        
 
 
 #! Import into files which handle students; only 1 should ever exist

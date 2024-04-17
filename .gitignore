@@ -2,3 +2,4 @@
 /ExplorerTest.py
 modules/FE_OLD.py
 *.pyc
+logs/studentDatabase.csv
