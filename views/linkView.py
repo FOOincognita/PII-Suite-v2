@@ -6,6 +6,7 @@ from modules.Linker import _LINKER #? Handles Linking; call PIILinker::__run()
 def link() -> None: ## TODO: ADD STUDENT & PIILinker CLASSES
     ## TODO redemption; archive support
     ## Maybe add stepper-bar?
+    #!! Change progress bar to toast
     
     setState = lambda key, val: setattr(st.session_state, key, val)
     getState = lambda key:      st.session_state.get(key)
@@ -75,8 +76,12 @@ def link() -> None: ## TODO: ADD STUDENT & PIILinker CLASSES
             _initExplorer("archiveSubsDir", "Select Archive Submissions", FileType.FOLDER)
             _initExplorer("archiveCSV",     "Select Archive CSV",         FileType.FILE  )
 
+
+
     #* Run Button        
-    VALID:  bool = all(getState(key).valid for key in ["starterDir", "outputDir", "submissionsDir", "originalCSV"])
+    valid = lambda keys: all(getState(key).valid for key in keys)
+    
+    VALID:  bool = valid(["starterDir", "outputDir", "submissionsDir", "originalCSV"])
     
     RT:     bool = REDEMPTION
     RVALID: bool = False
@@ -84,11 +89,8 @@ def link() -> None: ## TODO: ADD STUDENT & PIILinker CLASSES
     AR:     bool = ARCHIVES
     AVALID: bool = False
     
-    if RT:
-        RVALID = all((getState(key).valid for key in ["redemptionCSV", "redemptionSubsDir"]))
-    
-    if AR:
-        AVALID = all((getState(key).valid for key in ["archiveCSV", "archiveSubsDir"]))
+    if RT: RVALID = valid(["redemptionCSV", "redemptionSubsDir"])
+    if AR: AVALID = valid(["archiveCSV", "archiveSubsDir"])
         
     RUNNABLE = not (VALID and ((RT and RVALID) or not RT) and ((AR and AVALID) or not AR))
             ## ¬(P ∧ (((Q ∧ R) ∨ ¬Q) ∧ ((S ∧ T) ∨ ¬S)))

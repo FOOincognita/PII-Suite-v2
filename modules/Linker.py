@@ -142,6 +142,11 @@ class PIILinker:
         #* Redemption Paths
         self.redemptionCSVDir  = getPath("redemptionCSV")
         self.redemptionSubsDir = getPath("redemptionSubsDir")
+        
+        #* Archive Paths
+        self.archiveSubsDir = getPath("archiveSubsDir")
+        self.archiveCSV     = getPath("archiveCSV")
+        
     
         
     def _run(self) -> None:
@@ -149,41 +154,31 @@ class PIILinker:
         #* Update all variables
         self._update()
         
-        #* Status Bar
-        with st.status("Linking Submissions...", expanded=True) as status:
-            ## Setup
-            st.write("Running Setup...")
-            try: 
-                self.setup()
-            except InvalidStarterCode as e: 
-                status.update(label="Oospie Daisies...", state="error")
-                st.exception(InvalidStarterCode(f"[FATAL] Starter-Code Directory Contains 0 .h/.cpp File(s)\n\tDirectory: {e}"))
+        ## Setup
+        try: 
+            self.setup()
+        except InvalidStarterCode as e: 
+            st.exception(InvalidStarterCode(f"[FATAL] Starter-Code Directory Contains 0 .h/.cpp File(s)\n\tDirectory: {e}"))
                 
-            ## Link Submissions
-            st.write("Linking Original Submissions...")
-            try: 
-                self.link(LinkType.ORIGINAL)
-            except SIDNotFound as e:
-                status.update(label="Oospie Daisies...", state="error")
-                st.exception(SIDNotFound(f"[FATAL] SID {e} Not Found in Linker::link()"))
+        ## Link Submissions
+        try: 
+            self.link(LinkType.ORIGINAL)
+        except SIDNotFound as e:
+            st.exception(SIDNotFound(f"[FATAL] SID {e} Not Found in Linker::link()"))
                 
-            ## Link Redemption Submissions
-            if self.redemptionMode:
-                st.write("Linking Redemption Submissions...")
-                try:
-                    self.link(LinkType.REDEMPTION)
-                except SIDNotFound as e:
-                    status.update(label="Oospie Daisies...", state="error")
-                    st.exception(SIDNotFound(f"[FATAL] SID {e} Not Found in Linker::link(REDEMPTION)"))
-            
-            st.write("Writing Linked Submissions to Output...")   
+        ## Link Redemption Submissions
+        if self.redemptionMode:
             try:
-                self.generate()
-            except Exception as e:
-                status.update(label="Oospie Daisies...", state="error")
-                st.exception(Exception(f"[FATAL] Unknown Exception raised in Linker::generate()\n\tDetails: {e}"))
+                self.link(LinkType.REDEMPTION)
+            except SIDNotFound as e:
+                st.exception(SIDNotFound(f"[FATAL] SID {e} Not Found in Linker::link(REDEMPTION)"))
+             
+        ## Write linked files to directory
+        try:
+            self.generate()
+        except Exception as e:
+            st.exception(Exception(f"[FATAL] Unknown Exception raised in Linker::generate()\n\tDetails: {e}"))
                 
-            status.update(label="Submissions Successfully Linked!", state="complete", expanded=False)
 
 #* Singleton; import into needed files
 _LINKER = PIILinker()

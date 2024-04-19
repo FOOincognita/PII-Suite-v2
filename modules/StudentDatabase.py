@@ -84,7 +84,7 @@ class StudentDatabase:
         _DF = _DF[_DF['Status'] == 'Graded']
             
         #* Convert UIN and SID to int strings (truncate decimal)
-        _DF['UIN'] = _DF['UIN'].astype(int).astype(str)
+        _DF['UIN'] = _DF['UIN'].astype(int).astype(str).str.replace(',', '')
         _DF['SID'] = _DF['SID'].astype(int).astype(str)
         
         #* Replace empty entries in 'section' with "NA"
@@ -126,8 +126,6 @@ class StudentDatabase:
             ])
         
         pd.DataFrame(stuData, columns=["UIN", "name", "SID", "section", "email"]).to_csv(PATH, index=False)
-        
-
 
 #! Import into files which handle students; only 1 should ever exist
 _STUDENTS = StudentDatabase()
