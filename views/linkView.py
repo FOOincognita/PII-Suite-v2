@@ -13,10 +13,12 @@ def link() -> None: ## TODO: ADD STUDENT & PIILinker CLASSES
     st.title('Linker v2-β', anchor=False)
     
     #? Init redemption mode session state attr for global use
-    if "redemptionToggle" not in st.session_state:
-        setState("redemptionToggle", False)
     if "FERPAToggle" not in st.session_state:
         setState("FERPAToggle", True)
+    if "redemptionToggle" not in st.session_state:
+        setState("redemptionToggle", False)
+    if "archiveToggle" not in st.session_state:
+        setState("archiveToggle", False)
     
     #* Mode Selection   
     st.write(""); st.subheader("Mode Selection", anchor=False)
@@ -32,6 +34,12 @@ def link() -> None: ## TODO: ADD STUDENT & PIILinker CLASSES
             value=False, 
             help="Enables redemption-submission linking given valid paths"
         ); setState("redemptionToggle", REDEMPTION)
+        
+        ARCHIVES = st.toggle(
+            label="Archive Mode",
+            value=False,
+            help="Enables archive-submission linking given valid paths"
+        ); setState("archiveToggle", ARCHIVES)
     
     #> Init Explorers
     #! [FIXME]: It's possible allocating a session state variable may not be necessary
@@ -59,21 +67,36 @@ def link() -> None: ## TODO: ADD STUDENT & PIILinker CLASSES
         with st.container(border=1):  
             _initExplorer("redemptionSubsDir", "Select Redemption Submissions", FileType.FOLDER)
             _initExplorer("redemptionCSV",     "Select Redemption CSV",         FileType.FILE)
+            
+    #* Archive Submissions
+    if ARCHIVES:
+        st.write(''); st.subheader("Archive Submissions", anchor=False)
+        with st.container(border=1):
+            _initExplorer("archiveSubsDir", "Select Archive Submissions", FileType.FOLDER)
+            _initExplorer("archiveCSV",     "Select Archive CSV",         FileType.FILE  )
 
     #* Run Button        
-    RT:     bool = REDEMPTION #?? Just so it's shorter...
     VALID:  bool = all(getState(key).valid for key in ["starterDir", "outputDir", "submissionsDir", "originalCSV"])
+    
+    RT:     bool = REDEMPTION
     RVALID: bool = False
+    
+    AR:     bool = ARCHIVES
+    AVALID: bool = False
     
     if RT:
         RVALID = all((getState(key).valid for key in ["redemptionCSV", "redemptionSubsDir"]))
+    
+    if AR:
+        AVALID = all((getState(key).valid for key in ["archiveCSV", "archiveSubsDir"]))
         
-    RUNNABLE = not (all([not RT, VALID]) or all([RT, VALID, RVALID]))
+    RUNNABLE = not (VALID and ((RT and RVALID) or not RT) and ((AR and AVALID) or not AR))
+            ## ¬(P ∧ (((Q ∧ R) ∨ ¬Q) ∧ ((S ∧ T) ∨ ¬S)))
       
     st.write(""); st.button(
         label               = "Link Submissions",
         help                = "Run PII-Linker for selected files; all visable fields must contain valid paths",
-        disabled            = not (all([not RT, VALID]) or all([RT, VALID, RVALID])), #> ~((~P ^ Q) v (P ^ Q ^ R))
+        disabled            = RUNNABLE, #> ~((~P ^ Q) v (P ^ Q ^ R))
         on_click            = lambda: _LINKER._run(),
         use_container_width = True
     )
