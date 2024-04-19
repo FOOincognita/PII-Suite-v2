@@ -1,5 +1,50 @@
 {
-    "Global" : {
-        "Theme": "Dark"
+    "Global": {
+        "theme": "dark"
+    },
+
+
+    "Linker": {
+        "FERPAMode": 1,
+        "RedemptionMode": 0,
+        "ArchiveMode": 0,
+
+        "starter": "",
+        "output": "",
+
+        "Base": {
+            "submissions": "",
+            "csv": ""
+        },
+
+        "Redemption": {
+            "submissions": "",
+            "csv": ""
+        },
+
+        "Archive": {
+            "submissions": "",
+            "csv": ""
+        }
+    },
+
+
+    "Search": {
+        "csvFiles": []
+    },
+
+
+    "C50": {
+        "passes": [
+            "structure",
+            "text", 
+            "exact", 
+            "misspellings",
+            "nocomments"
+        ],
+        "archive": "",
+        "starter": "",
+        "output": "",
+        "numMatches": 500
     }
 }

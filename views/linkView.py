@@ -21,11 +21,17 @@ def link() -> None: ## TODO: ADD STUDENT & PIILinker CLASSES
     #* Mode Selection   
     st.write(""); st.subheader("Mode Selection", anchor=False)
     with st.container(border=1):  
-        FERPA = st.toggle("FERPA Mode", value=True, help="Names linked files using SubmissionID(s) rather than student names", )
-        setState("FERPAToggle", FERPA)
+        FERPA = st.toggle(
+            label="FERPA Mode", 
+            value=True, 
+            help="Names linked files using SubmissionID(s) rather than student names"
+        ); setState("FERPAToggle", FERPA)
         
-        REDEMPTION = st.toggle("Redemption Mode", value=False, help="Enables redemption-submission linking given valid paths")
-        setState("redemptionToggle", REDEMPTION)
+        REDEMPTION = st.toggle(
+            label="Redemption Mode", 
+            value=False, 
+            help="Enables redemption-submission linking given valid paths"
+        ); setState("redemptionToggle", REDEMPTION)
     
     #> Init Explorers
     #! [FIXME]: It's possible allocating a session state variable may not be necessary
@@ -42,7 +48,7 @@ def link() -> None: ## TODO: ADD STUDENT & PIILinker CLASSES
     #* Original Submissions
     st.write(""); st.subheader("Original Submissions", anchor=False)
     with st.container(border=1):
-        _initExplorer("starterDir",    "Select Starter Code Directory", FileType.FOLDER )
+        _initExplorer("starterDir",    "Select Starter Code Directory",  FileType.FOLDER)
         _initExplorer("outputDir",      "Select Output Directory",       FileType.FOLDER)
         _initExplorer("submissionsDir", "Select Submissions Directory",  FileType.FOLDER)
         _initExplorer("originalCSV",    "Select CSV File",               FileType.FILE  )
@@ -64,8 +70,7 @@ def link() -> None: ## TODO: ADD STUDENT & PIILinker CLASSES
         
     RUNNABLE = not (all([not RT, VALID]) or all([RT, VALID, RVALID]))
       
-    st.write("")
-    st.button(
+    st.write(""); st.button(
         label               = "Link Submissions",
         help                = "Run PII-Linker for selected files; all visable fields must contain valid paths",
         disabled            = not (all([not RT, VALID]) or all([RT, VALID, RVALID])), #> ~((~P ^ Q) v (P ^ Q ^ R))

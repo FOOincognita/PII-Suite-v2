@@ -10,12 +10,14 @@ def load_csv_data(path):
     return data
 
 
+#!!! ADD PULLDOWN FOR CSV FILES
+#!!! RENAME /logs/ to /databases/; implement naming scheme
 def search() -> None:
 
     st.title("Search v2-β")
     st.write("")
     with st.container(border=1):
-        df = load_csv_data("logs/studentDatabase.csv")
+        df = load_csv_data("logs/studentDatabase.csv") #!! ONLY USE HARD PATH IF USING LINK DATA
         LENGTH = len(df)
 
         # Text input for SID search
